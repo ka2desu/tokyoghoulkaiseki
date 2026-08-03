@@ -76,11 +76,25 @@
             font-weight: bold;
             letter-spacing: 1px;
         }
+        .header-info {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
         .version-badge {
             background: rgba(0, 0, 0, 0.3);
             padding: 2px 8px;
             border-radius: 12px;
             font-size: 0.7rem;
+        }
+        .counter-badge {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            color: #ffaa00;
+            font-weight: bold;
+            border: 1px solid rgba(255, 170, 0, 0.3);
         }
 
         .app-main {
@@ -351,7 +365,10 @@
     <div id="app" class="app-container">
         <header class="app-header">
             <h1>L 東京喰種</h1>
-            <span class="version-badge">Ver.1.0.5</span>
+            <div class="header-info">
+                <span class="version-badge">Ver.1.0.6</span>
+                <span id="access-counter" class="counter-badge">👁️ --- views</span>
+            </div>
         </header>
 
         <main class="app-main">
@@ -626,7 +643,7 @@
 
     <script>
         /* ==========================================
-           L 東京喰種 解析データおよびスクリプト (Ver.1.0.5)
+           L 東京喰種 解析データおよびスクリプト (Ver.1.0.6)
            ========================================== */
         const APP_DATA = {
             machineName: "L 東京喰種",
@@ -665,7 +682,25 @@
             updateCalculatedGames();
             updateCompleteness();
             updateResultDistributions();
+            fetchAccessCounter();
         });
+
+        // 無料のアクセス数カウントAPI（CountAPI等を利用）
+        function fetchAccessCounter() {
+            const counterEl = document.getElementById('access-counter');
+            if (!counterEl) return;
+            
+            // 固有の名前空間として github-tokyo-ghoul-tool を使用
+            fetch('https://api.countapi.xyz/hit/github-tokyo-ghoul-tool/visits')
+                .then(response => response.json())
+                .then(data => {
+                    counterEl.textContent = `👁️ ${data.value.toLocaleString()} views`;
+                })
+                .catch(error => {
+                    // 万が一API制限やエラーのときはプレースホルダー表示
+                    counterEl.textContent = `👁️ Viewer`;
+                });
+        }
 
         function adjustCounter(elementId, amount) {
             const input = document.getElementById(elementId);
@@ -721,7 +756,7 @@
         }
 
         function loadMemoData() {
-            const savedData = localStorage.getItem('tokyo_ghoul_memo_v5');
+            const savedData = localStorage.getItem('tokyo_ghoul_memo_v6');
             if (savedData) {
                 try {
                     const data = JSON.parse(savedData);
@@ -776,7 +811,7 @@
                 suggestions: suggestionHistory,
                 updatedAt: new Date().toLocaleString()
             };
-            localStorage.setItem('tokyo_ghoul_memo_v5', JSON.stringify(data));
+            localStorage.setItem('tokyo_ghoul_memo_v6', JSON.stringify(data));
         }
 
         function setupEventListeners() {
@@ -834,7 +869,7 @@
 
             resetBtn.addEventListener('click', () => {
                 if (confirm('すべてのデータをリセットしますか？')) {
-                    localStorage.removeItem('tokyo_ghoul_memo_v5');
+                    localStorage.removeItem('tokyo_ghoul_memo_v6');
                     document.getElementById('input-start-games').value = '0';
                     document.getElementById('input-current-games').value = '';
                     document.getElementById('input-games').value = '0';
