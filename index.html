@@ -47,7 +47,7 @@
             }
         }
 
-        /* スマホを横画面（ランドスケープ）にしたときの最適化 */
+        /* スマホを横画面にしたときの最適化 */
         @media (orientation: landscape) {
             .app-container {
                 max-width: 100% !important;
@@ -57,27 +57,6 @@
             }
             .app-main {
                 padding: 10px 16px !important;
-            }
-            #tab-memo.active {
-                display: flex;
-                flex-wrap: wrap;
-                gap: 10px;
-            }
-            #tab-memo.active h2 {
-                width: 100%;
-                margin-bottom: 2px;
-            }
-            #tab-memo.active .form-group {
-                flex: 1 1 48%;
-                margin-bottom: 6px !important;
-                padding: 8px !important;
-            }
-            #tab-memo.active .calc-card {
-                flex: 1 1 48%;
-                margin-bottom: 6px !important;
-            }
-            #tab-memo.active #btn-save-memo {
-                width: 100%;
             }
         }
 
@@ -104,7 +83,6 @@
             font-size: 0.7rem;
         }
 
-        /* メインスクロールエリア */
         .app-main {
             flex: 1 1 auto;
             min-height: 0;
@@ -114,7 +92,6 @@
             padding-bottom: 20px;
         }
 
-        /* 最下部固定タブバー */
         .app-nav {
             flex: 0 0 52px;
             width: 100%;
@@ -189,7 +166,6 @@
             border-color: #333;
         }
 
-        /* カウンター形式用スタイル */
         .counter-control {
             display: flex;
             align-items: center;
@@ -352,6 +328,22 @@
             text-align: right;
             font-weight: bold;
         }
+        .memo-history-list {
+            margin-top: 8px;
+            font-size: 0.8rem;
+            background: #0a0a0a;
+            padding: 8px;
+            border-radius: 6px;
+            border: 1px solid #333;
+            max-height: 120px;
+            overflow-y: auto;
+        }
+        .memo-history-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 3px 0;
+            border-bottom: 1px solid #222;
+        }
     </style>
 </head>
 <body>
@@ -359,7 +351,7 @@
     <div id="app" class="app-container">
         <header class="app-header">
             <h1>L 東京喰種</h1>
-            <span class="version-badge">Ver.1.0.1</span>
+            <span class="version-badge">Ver.1.0.5</span>
         </header>
 
         <main class="app-main">
@@ -433,6 +425,16 @@
                 </div>
 
                 <div class="form-group">
+                    <label>精神世界（超高確）30G選択回数</label>
+                    <div class="counter-control">
+                        <button type="button" class="counter-btn" onclick="adjustCounter('input-world-30', -1)">-</button>
+                        <input type="number" id="input-world-30" class="counter-value" value="0" min="0">
+                        <button type="button" class="counter-btn" onclick="adjustCounter('input-world-30', 1)">+</button>
+                    </div>
+                    <span style="font-size:0.75rem; color:#aaa; margin-top:4px; display:block;">※設定6は1Gに比べ30G選択率が約4倍高い要注目要素！</span>
+                </div>
+
+                <div class="form-group">
                     <label>100G到達回数（分母）</label>
                     <div class="counter-control">
                         <button type="button" class="counter-btn" onclick="adjustCounter('input-100g-total', -1)">-</button>
@@ -495,11 +497,36 @@
                     </div>
                 </div>
 
+                <div class="form-group">
+                    <label>重要演出・終了画面の記録</label>
+                    <select id="select-suggestion-type" style="margin-bottom: 6px;">
+                        <option value="月山招待状：金(4以上示唆)">月山招待状：存分に楽しもう(4以上)</option>
+                        <option value="月山招待状：虹(6濃厚)">月山招待状：特別な夜(6濃厚)</option>
+                        <option value="CZ終了画面：鈴屋什造(偶数示唆)">CZ終了画面：鈴屋什造(偶数)</option>
+                        <option value="CZ終了画面：梟(4以上濃厚)">CZ終了画面：梟(4以上)</option>
+                        <option value="CZ終了画面：有馬貴将(6濃厚)">CZ終了画面：有馬貴将(6濃厚)</option>
+                        <option value="AT終了画面：金木研(デフォルト)">AT終了画面：金木研(デフォ)</option>
+                        <option value="AT終了画面：亜門＆真戸(奇数示唆)">AT終了画面：亜門＆真戸(奇数示唆)</option>
+                        <option value="AT終了画面：篠原＆鈴屋(偶数示唆)">AT終了画面：篠原＆鈴屋(偶数示唆)</option>
+                        <option value="AT終了画面：神代利世(設定2以上濃厚)">AT終了画面：神代利世(2以上濃厚)</option>
+                        <option value="AT終了画面：苗口＆笛口(高設定示唆弱)">AT終了画面：苗口＆笛口(高設定弱)</option>
+                        <option value="AT終了画面：ウタ＆イトリ＆四方(高設定示唆強)">AT終了画面：ウタ＆イトリ＆四方(高設定強)</option>
+                        <option value="AT終了画面：金枠 金木＆董香(設定4以上濃厚)">AT終了画面：金枠 金木＆董香(4以上濃厚)</option>
+                        <option value="AT終了画面：あんていく全員集合(設定6濃厚)">AT終了画面：あんていく全員集合(6濃厚)</option>
+                        <option value="獲得枚数：456OVER(4以上)">獲得枚数：456OVER(4以上)</option>
+                        <option value="獲得枚数：666/1000-7(6濃厚)">獲得枚数：666/1000-7(6濃厚)</option>
+                    </select>
+                    <button type="button" class="btn-secondary" id="btn-add-suggestion" style="margin-bottom:0;">示唆メモに追加</button>
+                    <div class="memo-history-list" id="suggestion-history-list">
+                        <span style="color:#666;">記録された示唆はここに表示されます</span>
+                    </div>
+                </div>
+
                 <button id="btn-save-memo" class="btn-primary">データを保存</button>
             </section>
 
             <section id="tab-results" class="tab-content">
-                <h2>実戦結果 ＆ 確率計算</h2>
+                <h2>実戦結果 ＆ 分布集計</h2>
                 
                 <div class="calc-card">
                     <h3>現在の実戦確率（自動計算）</h3>
@@ -540,6 +567,13 @@
                         <strong id="calc-rebound-result">---</strong>
                     </div>
                 </div>
+
+                <div class="calc-card">
+                    <h3>記録した重要演出・終了画面の分布</h3>
+                    <div id="result-suggestion-distribution" style="font-size: 0.85rem;">
+                        <p style="color: #777; text-align: center; padding: 8px;">データがありません</p>
+                    </div>
+                </div>
             </section>
 
             <section id="tab-analysis" class="tab-content">
@@ -570,7 +604,7 @@
                 <div class="result-card">
                     <h3>設定推測確率（分布）</h3>
                     <div id="inference-distribution-container" style="margin-top: 10px;">
-                        </div>
+                    </div>
                 </div>
             </section>
 
@@ -592,7 +626,7 @@
 
     <script>
         /* ==========================================
-           L 東京喰種 解析データおよびスクリプト (Ver.1.0.1)
+           L 東京喰種 解析データおよびスクリプト (Ver.1.0.5)
            ========================================== */
         const APP_DATA = {
             machineName: "L 東京喰種",
@@ -608,8 +642,20 @@
                 lowReplayProb: [1260.3, 1213.6, 1170.3, 1129.9, 1092.3, 1024.0],
                 reboundRate: [7.81, 7.81, 9.38, 10.94, 12.50, 15.23],
                 payout: [97.5, 99.0, 101.6, 105.6, 110.3, 114.9]
-            }
+            },
+            atScreenData: [
+                { name: "金木研", suggestion: "デフォルト", rates: ["72.55%", "---", "---", "---", "---", "61.34%"] },
+                { name: "亜門＆真戸", suggestion: "奇数設定示唆", rates: ["13.73%", "---", "---", "---", "---", "10.92%"] },
+                { name: "篠原＆鈴屋", suggestion: "偶数設定示唆", rates: ["9.80%", "---", "---", "---", "---", "11.76%"] },
+                { name: "神代利世", suggestion: "設定2以上濃厚", rates: ["-", "1.68%以上", "1.68%以上", "1.68%以上", "1.68%以上", "1.68%"] },
+                { name: "苗口＆笛口", suggestion: "高設定示唆(弱)", rates: ["3.92%", "---", "---", "---", "---", "6.72%"] },
+                { name: "ウタ＆イトリ＆四方", suggestion: "高設定示唆(強)", rates: ["-", "4.20%以上", "4.20%以上", "4.20%以上", "4.20%以上", "4.20%"] },
+                { name: "金枠 金木＆董香", suggestion: "設定4以上濃厚", rates: ["-", "-", "-", "2.52%以上", "2.52%以上", "2.52%"] },
+                { name: "あんていく全員集合", suggestion: "設定6濃厚", rates: ["-", "-", "-", "-", "-", "0.84%"] }
+            ]
         };
+
+        let suggestionHistory = [];
 
         document.addEventListener('DOMContentLoaded', () => {
             initTabs();
@@ -618,6 +664,7 @@
             setupEventListeners();
             updateCalculatedGames();
             updateCompleteness();
+            updateResultDistributions();
         });
 
         function adjustCounter(elementId, amount) {
@@ -674,7 +721,7 @@
         }
 
         function loadMemoData() {
-            const savedData = localStorage.getItem('tokyo_ghoul_memo');
+            const savedData = localStorage.getItem('tokyo_ghoul_memo_v5');
             if (savedData) {
                 try {
                     const data = JSON.parse(savedData);
@@ -685,6 +732,7 @@
                     document.getElementById('input-reminiscence').value = data.reminiscence !== undefined ? data.reminiscence : 0;
                     document.getElementById('input-rise').value = data.rise !== undefined ? data.rise : 0;
                     document.getElementById('input-ep-bonus').value = data.epBonus !== undefined ? data.epBonus : 0;
+                    document.getElementById('input-world-30').value = data.world30 !== undefined ? data.world30 : 0;
                     document.getElementById('input-100g-total').value = data.g100Total !== undefined ? data.g100Total : 0;
                     document.getElementById('input-100g-hit').value = data.g100Hit !== undefined ? data.g100Hit : 0;
                     document.getElementById('input-urat-total').value = data.uratTotal !== undefined ? data.uratTotal : 0;
@@ -693,8 +741,14 @@
                     document.getElementById('input-at-end').value = data.atEnd !== undefined ? data.atEnd : 0;
                     document.getElementById('input-at-rebound').value = data.atRebound !== undefined ? data.atRebound : 0;
                     
+                    if (data.suggestions) {
+                        suggestionHistory = data.suggestions;
+                        renderSuggestionHistory();
+                    }
+
                     updateCalculatedGames();
                     calculateStats();
+                    updateResultDistributions();
                 } catch (e) {
                     console.error('データ読込エラー', e);
                 }
@@ -711,6 +765,7 @@
                 reminiscence: document.getElementById('input-reminiscence').value,
                 rise: document.getElementById('input-rise').value,
                 epBonus: document.getElementById('input-ep-bonus').value,
+                world30: document.getElementById('input-world-30').value,
                 g100Total: document.getElementById('input-100g-total').value,
                 g100Hit: document.getElementById('input-100g-hit').value,
                 uratTotal: document.getElementById('input-urat-total').value,
@@ -718,14 +773,16 @@
                 lowReplay: document.getElementById('input-low-replay').value,
                 atEnd: document.getElementById('input-at-end').value,
                 atRebound: document.getElementById('input-at-rebound').value,
+                suggestions: suggestionHistory,
                 updatedAt: new Date().toLocaleString()
             };
-            localStorage.setItem('tokyo_ghoul_memo', JSON.stringify(data));
+            localStorage.setItem('tokyo_ghoul_memo_v5', JSON.stringify(data));
         }
 
         function setupEventListeners() {
             const saveBtn = document.getElementById('btn-save-memo');
             const resetBtn = document.getElementById('btn-reset');
+            const addSuggestionBtn = document.getElementById('btn-add-suggestion');
             
             const startGamesInput = document.getElementById('input-start-games');
             const currentGamesInput = document.getElementById('input-current-games');
@@ -755,15 +812,29 @@
                 }
             });
 
+            if (addSuggestionBtn) {
+                addSuggestionBtn.addEventListener('click', () => {
+                    const selectEl = document.getElementById('select-suggestion-type');
+                    const val = selectEl.value;
+                    const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                    suggestionHistory.unshift({ text: val, time: timeStr });
+                    renderSuggestionHistory();
+                    autoSaveMemo();
+                    calculateStats();
+                    updateResultDistributions();
+                });
+            }
+
             saveBtn.addEventListener('click', () => {
                 autoSaveMemo();
                 alert('実戦メモを保存しました！');
                 calculateStats();
+                updateResultDistributions();
             });
 
             resetBtn.addEventListener('click', () => {
                 if (confirm('すべてのデータをリセットしますか？')) {
-                    localStorage.removeItem('tokyo_ghoul_memo');
+                    localStorage.removeItem('tokyo_ghoul_memo_v5');
                     document.getElementById('input-start-games').value = '0';
                     document.getElementById('input-current-games').value = '';
                     document.getElementById('input-games').value = '0';
@@ -772,6 +843,7 @@
                     document.getElementById('input-reminiscence').value = '0';
                     document.getElementById('input-rise').value = '0';
                     document.getElementById('input-ep-bonus').value = '0';
+                    document.getElementById('input-world-30').value = '0';
                     document.getElementById('input-100g-total').value = '0';
                     document.getElementById('input-100g-hit').value = '0';
                     document.getElementById('input-urat-total').value = '0';
@@ -779,14 +851,72 @@
                     document.getElementById('input-low-replay').value = '0';
                     document.getElementById('input-at-end').value = '0';
                     document.getElementById('input-at-rebound').value = '0';
+                    suggestionHistory = [];
+                    renderSuggestionHistory();
 
                     calculateStats();
                     updateReliability(0);
                     updateInferenceDistribution();
                     updateCompleteness();
+                    updateResultDistributions();
                     alert('リセットしました。');
                 }
             });
+        }
+
+        function renderSuggestionHistory() {
+            const container = document.getElementById('suggestion-history-list');
+            if (!container) return;
+            if (suggestionHistory.length === 0) {
+                container.innerHTML = '<span style="color:#666;">記録された示唆はここに表示されます</span>';
+                return;
+            }
+            let html = '';
+            suggestionHistory.forEach((item, index) => {
+                html += `
+                    <div class="memo-history-item">
+                        <span>${item.text}</span>
+                        <span style="color:#888;">${item.time} <button type="button" onclick="removeSuggestion(${index})" style="background:none; border:none; color:#ff2400; cursor:pointer; margin-left:6px;">×</button></span>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        window.removeSuggestion = function(index) {
+            suggestionHistory.splice(index, 1);
+            renderSuggestionHistory();
+            autoSaveMemo();
+            calculateStats();
+            updateResultDistributions();
+        };
+
+        function updateResultDistributions() {
+            const container = document.getElementById('result-suggestion-distribution');
+            if (!container) return;
+
+            if (suggestionHistory.length === 0) {
+                container.innerHTML = '<p style="color: #777; text-align: center; padding: 8px;">データがありません</p>';
+                return;
+            }
+
+            let counts = {};
+            suggestionHistory.forEach(item => {
+                counts[item.text] = (counts[item.text] || 0) + 1;
+            });
+
+            let html = '';
+            const total = suggestionHistory.length;
+            for (const [text, cnt] of Object.entries(counts)) {
+                const pct = Math.round((cnt / total) * 100);
+                html += `
+                    <div class="stat-row" style="margin-bottom: 4px;">
+                        <span style="max-width: 70%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${text}:</span>
+                        <strong>${cnt}回 (${pct}%)</strong>
+                    </div>
+                `;
+            }
+            container.innerHTML = html;
         }
 
         function calculateStats() {
@@ -829,7 +959,6 @@
             document.getElementById('calc-low-replay-result').textContent = lowReplayActual > 0 ? `1 / ${lowReplayActual}` : '---';
             document.getElementById('calc-rebound-result').textContent = atEnd > 0 ? `${reboundPct}%` : '---';
 
-            // 各種実戦値をハイライト関数へ渡す
             highlightClosestSpecs({
                 cz: parseFloat(czActual),
                 at: parseFloat(atActual),
@@ -959,11 +1088,25 @@
             const specs = APP_DATA.specs;
             let likelihoods = [1.0, 1.0, 1.0, 1.0, 1.0, 1.0]; 
 
+            suggestionHistory.forEach(item => {
+                const text = item.text;
+                if (text.includes("設定2以上濃厚") || text.includes("神代利世")) {
+                    likelihoods[0] = 0; 
+                }
+                if (text.includes("4以上") || text.includes("金木＆董香") || text.includes("梟") || text.includes("月山招待状：金")) {
+                    likelihoods[0] = 0; likelihoods[1] = 0; likelihoods[2] = 0; 
+                }
+                if (text.includes("設定6濃厚") || text.includes("あんていく全員集合") || text.includes("有馬貴将") || text.includes("月山招待状：虹")) {
+                    likelihoods = [0, 0, 0, 0, 0, 1]; 
+                }
+            });
+
             if (games > 100 && (cz > 0 || at > 0)) {
                 const userCzProb = games / (cz || 1);
                 const userAtProb = games / (at || 1);
 
                 for (let i = 0; i < 6; i++) {
+                    if (likelihoods[i] === 0) continue;
                     const czDiffRatio = Math.abs(specs.czProb[i] - userCzProb) / specs.czProb[i];
                     const atDiffRatio = Math.abs(specs.atProb[i] - userAtProb) / specs.atProb[i];
                     
@@ -999,6 +1142,7 @@
         function renderAnalysisData() {
             const container = document.getElementById('analysis-container');
             const specs = APP_DATA.specs;
+            const atScreen = APP_DATA.atScreenData;
 
             let html = `
                 <div class="result-card">
@@ -1025,6 +1169,36 @@
                     </tr>
                 `;
             }
+
+            html += `
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="result-card">
+                    <h3>AT終了画面 選択率（実戦値）</h3>
+                    <table class="spec-table" style="font-size: 0.7rem;">
+                        <thead>
+                            <tr>
+                                <th>画面</th>
+                                <th>示唆内容</th>
+                                <th>1</th>
+                                <th>6</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+
+            atScreen.forEach(item => {
+                html += `
+                    <tr>
+                        <td style="text-align: left;"><strong>${item.name}</strong></td>
+                        <td style="color: #ff8c00;">${item.suggestion}</td>
+                        <td>${item.rates[0]}</td>
+                        <td>${item.rates[5]}</td>
+                    </tr>
+                `;
+            });
 
             html += `
                         </tbody>
@@ -1149,7 +1323,6 @@
                 if (closestAtRow) closestAtRow.classList.add('highlight-spec');
             }
 
-            // 主要フラグテーブルのハイライト処理
             const analysisTable = document.getElementById('spec-analysis-table');
             if (!analysisTable) return;
 
